@@ -32,8 +32,22 @@ async function run() {
         const craftCollection = client.db("craftDB").collection("crafts");
 
 
-        // POST
 
+        // Get
+        app.get('/crafts', async(req, res) => {
+            const cursor = craftCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+
+
+
+
+
+
+
+        // POST
          app.post('/crafts', async(req, res) => {
             const craft = req.body;
             console.log(craft);
