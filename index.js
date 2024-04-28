@@ -39,19 +39,19 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
-        
+
         // GET single for craft item details
         app.get('/crafts/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await craftCollection.findOne(query);
             res.send(result);
         })
 
         // GET MANY for My Added Craft section
-        app.get('/myCrafts/:email', async(req, res) => {
+        app.get('/myCrafts/:email', async (req, res) => {
             const userEmail = req.params.email;
-            const query = {email: userEmail}
+            const query = { email: userEmail }
             const cursor = craftCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
@@ -59,11 +59,48 @@ async function run() {
 
 
         // DELETE
-        app.delete('/myCrafts/:id', async(req, res) => {
+        app.delete('/myCrafts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await craftCollection.deleteOne(query);
             res.send(result);
+        })
+
+
+        // GET single for for update crafts default value
+        app.get('/myCraft/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await craftCollection.findOne(query);
+            res.send(result);
+
+        })
+
+
+        // PUT OR UPDATe
+        app.put('/myCraft/:id', async (req, res) => {
+            const id = req.params.id;
+            const craft = req.body;
+            console.log(id, craft);
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateCraft = {
+                $set: {
+                    name: craft.name,
+                    price: craft.price,
+                    description: craft.description,
+                    customization: craft.customization,
+                    processing: craft.processing,
+                    subCategory: craft.subCategory,
+                    rating: craft.rating,
+                    stockStatus: craft.stockStatus,
+                    photo: craft.photo
+                },
+            };
+
+            const result = await craftCollection.updateOne(filter, updateCraft, options);
+            res.send(result);
+
         })
 
 
