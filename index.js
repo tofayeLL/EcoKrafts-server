@@ -134,16 +134,22 @@ async function run() {
             const result = await craftCollection.find(query).toArray();
             res.send(result);
         })
+    
+
+
+
+        app.get('/user', async(req, res) => {
+            const user = req.body;
+        })
 
 
 
 
 
-
-        // POST
+        // post
         app.post('/crafts', async (req, res) => {
             const craft = req.body;
-            console.log(craft);
+            // console.log(craft);
             const result = await craftCollection.insertOne(craft);
             res.send(result);
         })
