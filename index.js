@@ -27,13 +27,16 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const craftCollection = client.db("craftDB").collection("crafts");
+        const categoryCollection = client.db("craftDB").collection("categories");
 
 
 
-        // Get Many
+
+
+        // Get Many for All crafts and craft items
         app.get('/crafts', async (req, res) => {
             const cursor = craftCollection.find();
             const result = await cursor.toArray();
@@ -47,6 +50,15 @@ async function run() {
             const result = await craftCollection.findOne(query);
             res.send(result);
         })
+
+        // GET Single Find For all craft details
+        app.get('/craft/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await craftCollection.findOne(query);
+            res.send(result)
+        })
+
 
         // GET MANY for My Added Craft section
         app.get('/myCrafts/:email', async (req, res) => {
@@ -65,6 +77,7 @@ async function run() {
             const result = await craftCollection.deleteOne(query);
             res.send(result);
         })
+
 
 
         // GET single for for update crafts default value
@@ -107,6 +120,23 @@ async function run() {
 
 
 
+        // CATEGORIES data
+        app.get('/categories', async (req, res) => {
+            const cursor = categoryCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        // by use GET to get all subcategory related data from crafts collection
+        app.get('/categories/:subCategory', async (req, res) => {
+            const subCategory = req.params.subCategory;
+            const query = { subCategory: subCategory };
+            const result = await craftCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+
 
 
 
@@ -123,13 +153,8 @@ async function run() {
 
 
 
-
-
-
-
-
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
